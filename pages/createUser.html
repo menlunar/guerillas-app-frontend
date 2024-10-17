@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/style.css">
     <title>Create User</title>
 </head>
+
 <body>
     <nav>
         <ul>
@@ -21,8 +23,13 @@
             <label for="username">Username:</label>
             <input type="text" id="username" required>
 
-            <label for="isMember">Is Member:</label>
-            <input type="checkbox" id="isMember">
+            <label for="selectMembership">Membership:</label>
+            <select id="selectMembership" required>
+                <!-- Membership will be dynamically populated here -->
+            </select>
+
+            <!-- <label for="isMember">Is Member:</label> -->
+            <!-- <input type="checkbox" id="isMember"> -->
 
             <div id="memberDetails" style="display:none;">
                 <label for="startDate">Start Date:</label>
@@ -44,4 +51,5 @@
 
     <script src="../assets/js/users.js"></script> <!-- Linked external JS -->
 </body>
+
 </html>

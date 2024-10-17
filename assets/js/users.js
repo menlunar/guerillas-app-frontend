@@ -5,6 +5,14 @@ let sampleUsers = [
     { id: 3, name: 'Alice Johnson', isMember: true, startDate: '2024-06-01', expiryDate: '2025-06-01' }
 ];
 
+//Sample Membership Categories
+let sampleMembership = [
+    { id: 1, name: 'Trial' },
+    { id: 2, name: 'Non-Member' },
+    { id: 3, name: 'Member' },
+    { id: 4, name: 'Scholar/Free' }
+];
+
 // Current Edit Mode (null when not editing a user)
 let editUserId = null;
 
@@ -24,6 +32,19 @@ function renderUsers() {
     });
 }
 
+// Populate Membership dropdown
+const selectMembership = document.getElementById('selectMembership');
+function populateMembershipDropdown() {
+    selectMembership.innerHTML = '';
+    sampleMembership.forEach(membership => {
+        const option = document.createElement('option');
+        option.value = membership.id;
+        option.textContent = membership.name;
+        selectMembership.appendChild(option);
+    });
+}
+
+
 renderUsers();
 
 // Show Form for New User
@@ -31,6 +52,7 @@ const userFormContainer = document.getElementById('userFormContainer');
 const newUserButton = document.getElementById('newUserButton');
 newUserButton.addEventListener('click', () => {
     resetForm();
+    populateMembershipDropdown();
     userFormContainer.style.display = 'block'; // Show the form
 });
 
@@ -40,9 +62,9 @@ const submitBtn = document.getElementById('submitBtn');
 createUserForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const username = document.getElementById('username').value;
-    const isMember = document.getElementById('isMember').checked;
-    const startDate = document.getElementById('startDate').value;
-    const expiryDate = isMember ? calculateExpiryDate(startDate) : null; // Calculate expiry date if member
+    // const isMember = document.getElementById('isMember').checked;
+    // const startDate = document.getElementById('startDate').value;
+    // const expiryDate = isMember ? calculateExpiryDate(startDate) : null; // Calculate expiry date if member
     const userId = document.getElementById('userId').value;
 
     if (editUserId) {
@@ -86,19 +108,21 @@ function deleteUser(id) {
 // Reset Form to Create Mode
 function resetForm() {
     document.getElementById('username').value = '';
-    document.getElementById('isMember').checked = false;
+    // document.getElementById('isMember').checked = false;
     document.getElementById('startDate').value = '';
     document.getElementById('expiryDate').value = '';
     document.getElementById('userId').value = '';
+    // document.getElementById('selectMembership').value = '';
+
     editUserId = null;
     submitBtn.textContent = "Create User"; // Reset button text
     userFormContainer.style.display = 'none'; // Hide the form
 }
 
 // Toggle Member Details
-document.getElementById('isMember').addEventListener('change', function () {
-    toggleMemberDetails(this.checked);
-});
+// document.getElementById('isMember').addEventListener('change', function () {
+//     toggleMemberDetails(this.checked);
+// });
 
 // Show/Hide Member Details
 function toggleMemberDetails(isMember) {

@@ -12,6 +12,7 @@ const sampleTrainingCategories = [
     { id: 4, name: 'Others' }
 ];
 
+
 // Attendance Data
 let attendanceData = [];
 
