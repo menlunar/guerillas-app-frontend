@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Create User</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./attendance.html">Add Attendance</a></li>
+        </ul>
+    </nav>
+
+    <h1>Create User</h1>
+
+    <div id="userFormContainer" style="display:none;">
+        <form id="createUserForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+
+            <label for="isMember">Is Member:</label>
+            <input type="checkbox" id="isMember">
+
+            <div id="memberDetails" style="display:none;">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate">
+                <label for="expiryDate">Expiry Date:</label>
+                <input type="date" id="expiryDate" disabled>
+            </div>
+
+            <input type="hidden" id="userId"> <!-- Hidden input to store user ID during edit -->
+            <button type="submit" id="submitBtn">Create User</button>
+            <button type="button" id="cancelBtn">Cancel</button>
+        </form>
+    </div>
+
+    <button id="newUserButton">Create New User</button>
+
+    <h2>Current Users</h2>
+    <ul id="userList"></ul>
+
+    <script src="../assets/js/users.js"></script> <!-- Linked external JS -->
+</body>
+</html>

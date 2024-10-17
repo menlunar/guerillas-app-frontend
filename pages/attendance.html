@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Add Attendance</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./createUser.html">Create User</a></li>
+        </ul>
+    </nav>
+
+    <h1>Attendance</h1>
+
+    <button id="createAttendanceBtn">Create Attendance</button>
+
+    <!-- Attendance Form -->
+    <div id="attendanceFormContainer" style="display:none;">
+        <form id="attendanceForm">
+            <label for="selectUser">Select User:</label>
+            <select id="selectUser" required>
+                <!-- Users will be dynamically populated here -->
+            </select>
+
+            <label for="attendanceDate">Date:</label>
+            <input type="date" id="attendanceDate" required>
+
+            <label for="isPaid">Paid:</label>
+            <input type="checkbox" id="isPaid">
+
+            <button type="submit" id="submitAttendanceBtn">Add Attendance</button>
+            <button type="button" id="cancelAttendanceBtn">Cancel</button>
+        </form>
+    </div>
+
+    <h2>Attendance Records</h2>
+    <div id="attendanceRecords"></div>
+
+    <script src="../assets/js/attendance.js"></script> <!-- Linked external JS -->
+</body>
+</html>
