@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/style.css">
     <title>Add Attendance</title>
 </head>
+
 <body>
     <nav>
         <ul>
@@ -29,6 +31,11 @@
             <label for="attendanceDate">Date:</label>
             <input type="date" id="attendanceDate" required>
 
+            <label for="trainingCategory">TrainingCategory:</label>
+            <select id="selectTrainingCategory" required>
+                <!-- TrainingCategory will be dynamically populated here -->
+            </select>
+
             <label for="isPaid">Paid:</label>
             <input type="checkbox" id="isPaid">
 
@@ -42,4 +49,5 @@
 
     <script src="../assets/js/attendance.js"></script> <!-- Linked external JS -->
 </body>
+
 </html>

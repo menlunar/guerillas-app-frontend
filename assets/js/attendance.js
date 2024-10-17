@@ -5,6 +5,13 @@ const sampleUsers = [
     { id: 3, name: 'Alice Johnson' }
 ];
 
+const sampleTrainingCategories = [
+    { id: 1, name: 'Jiujitsu' },
+    { id: 2, name: 'Wrestling' },
+    { id: 3, name: 'Judo' },
+    { id: 4, name: 'Others' }
+];
+
 // Attendance Data
 let attendanceData = [];
 
@@ -12,6 +19,7 @@ let attendanceData = [];
 const attendanceFormContainer = document.getElementById('attendanceFormContainer');
 const createAttendanceBtn = document.getElementById('createAttendanceBtn');
 const selectUser = document.getElementById('selectUser');
+const selectTrainingCategory = document.getElementById('selectTrainingCategory');
 const attendanceDate = document.getElementById('attendanceDate');
 const isPaidCheckbox = document.getElementById('isPaid');
 const attendanceRecords = document.getElementById('attendanceRecords');
@@ -19,6 +27,7 @@ const attendanceRecords = document.getElementById('attendanceRecords');
 // Display attendance form when "Create Attendance" is clicked
 createAttendanceBtn.addEventListener('click', () => {
     populateUsersDropdown();
+    populateTrainingCategoriesDropdown();
     attendanceFormContainer.style.display = 'block'; // Show the form
 });
 
@@ -36,6 +45,17 @@ function populateUsersDropdown() {
         option.value = user.id;
         option.textContent = user.name;
         selectUser.appendChild(option);
+    });
+}
+
+// Populate Training categories dropdown
+function populateTrainingCategoriesDropdown() {
+    selectTrainingCategory.innerHTML = '';
+    sampleTrainingCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        selectTrainingCategory.appendChild(option);
     });
 }
 
