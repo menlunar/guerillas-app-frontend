@@ -67,8 +67,10 @@ document.getElementById('attendanceForm').addEventListener('submit', (e) => {
     const user = sampleUsers.find(u => u.id == userId).name;
     const date = attendanceDate.value;
     const isPaid = isPaidCheckbox.checked;
+    const trainingCategoryId = selectTrainingCategory.value;
+    const trainingCategory = sampleTrainingCategories.find(t => t.id == trainingCategoryId).name;
 
-    const newAttendance = { user, date, isPaid };
+    const newAttendance = { user, date, isPaid, trainingCategory};
 
     attendanceData.push(newAttendance); // Add to the list
     groupAttendanceByMonthAndDay(); // Regroup data by month and day
@@ -120,7 +122,7 @@ function displayGroupedAttendance(groupedData) {
             const ul = document.createElement('ul');
             entries.forEach(entry => {
                 const li = document.createElement('li');
-                li.textContent = `${entry.user} - ${entry.isPaid ? 'Paid' : 'Unpaid'}`;
+                li.textContent = `${entry.user} - ${entry.trainingCategory} - ${entry.isPaid ? 'Paid' : 'Unpaid'}`;
                 ul.appendChild(li);
             });
 
