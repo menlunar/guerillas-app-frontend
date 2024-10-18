@@ -157,7 +157,8 @@ function groupAttendanceByMonthAndDay() {
     displayGroupedAttendance(groupedData);
 }
 
-// Display grouped attendance by month and day
+
+// Display grouped attendance by month and day in table form
 function displayGroupedAttendance(groupedData) {
     attendanceRecords.innerHTML = '';
 
@@ -165,21 +166,43 @@ function displayGroupedAttendance(groupedData) {
         const monthSection = document.createElement('div');
         monthSection.innerHTML = `<h3>${month}</h3>`;
 
+        // Create table for each month
+        const table = document.createElement('table');
+        table.border = "1"; // Add a border for the table
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+
+        // Table headers
+        headerRow.innerHTML = `
+            <th>Date</th>
+            <th>User</th>
+            <th>Training Category</th>
+            <th>Amount Paid (PHP)</th>
+            <th>Mode of Payment</th>
+            <th>Payment Receiver</th>
+        `;
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+
         for (const [day, entries] of Object.entries(days)) {
-            const daySection = document.createElement('div');
-            daySection.innerHTML = `<h4>${day}</h4>`;
-
-            const ul = document.createElement('ul');
             entries.forEach(entry => {
-                const li = document.createElement('li');
-                li.textContent = `${entry.user} - ${entry.trainingCategory} - Amount Paid : ${entry.amountPaid != '' ? entry.amountPaid : 0} php - ${entry.modeOfPayment} - Receiver : ${entry.paymentReceiver} `;
-                ul.appendChild(li);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${day}</td>
+                    <td>${entry.user}</td>
+                    <td>${entry.trainingCategory}</td>
+                    <td>${entry.amountPaid !== '' ? entry.amountPaid : 0}</td>
+                    <td>${entry.modeOfPayment}</td>
+                    <td>${entry.paymentReceiver}</td>
+                `;
+                tbody.appendChild(row);
             });
-
-            daySection.appendChild(ul);
-            monthSection.appendChild(daySection);
         }
 
+        table.appendChild(tbody);
+        monthSection.appendChild(table);
         attendanceRecords.appendChild(monthSection);
     }
 }
