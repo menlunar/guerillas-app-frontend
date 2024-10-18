@@ -77,3 +77,21 @@ th, td {
 tr:hover {
     background-color: #f1f1f1;  /* Highlight rows on hover */
 }
+
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.attendance-table th, .attendance-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.attendance-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
