@@ -28,9 +28,6 @@
                 <!-- Membership will be dynamically populated here -->
             </select>
 
-            <!-- <label for="isMember">Is Member:</label> -->
-            <!-- <input type="checkbox" id="isMember"> -->
-
             <div id="memberDetails" style="display:none;">
                 <label for="startDate">Start Date:</label>
                 <input type="date" id="startDate">
@@ -47,7 +44,22 @@
     <button id="newUserButton">Create New User</button>
 
     <h2>Current Users</h2>
-    <ul id="userList"></ul>
+
+    <!-- Table for Current Users -->
+    <table id="userTable" border="1" style="width: 100%; margin-top: 20px;">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Membership</th>
+                <th>Start Date</th>
+                <th>Expiry Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Users will be dynamically inserted here -->
+        </tbody>
+    </table>
 
     <script src="../assets/js/users.js"></script> <!-- Linked external JS -->
 </body>
