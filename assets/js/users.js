@@ -78,7 +78,7 @@ createUserForm.addEventListener('submit', (e) => {
     } else {
         // Add New User
         const newUserId = sampleUsers.length + 1;
-        sampleUsers.push({ id: newUserId, name: username, isMember, startDate, expiryDate });
+        sampleUsers.push({ id: newUserId, name: username, startDate, expiryDate });
         renderUsers();  // Re-render list with new user
     }
 });
