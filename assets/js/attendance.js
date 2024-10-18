@@ -160,37 +160,44 @@ function groupAttendanceByMonthAndDay() {
 
 // Display grouped attendance by month and day in table form
 function displayGroupedAttendance(groupedData) {
-    attendanceRecords.innerHTML = '';
+    attendanceRecords.innerHTML = ''; // Clear existing records
 
+    // Iterate through the months
     for (const [month, days] of Object.entries(groupedData)) {
         const monthSection = document.createElement('div');
-        monthSection.innerHTML = `<h3>${month}</h3>`;
+        monthSection.innerHTML = `<h2>${month}</h2>`; // Add month header
 
-        // Create table for each month
-        const table = document.createElement('table');
-        table.border = "1"; // Add a border for the table
-        const thead = document.createElement('thead');
-        const headerRow = document.createElement('tr');
+        // Sort the days in descending order (latest day first)
+        const sortedDays = Object.keys(days).sort((a, b) => new Date(b) - new Date(a));
 
-        // Table headers
-        headerRow.innerHTML = `
-            <th>Date</th>
-            <th>User</th>
-            <th>Training Category</th>
-            <th>Amount Paid (PHP)</th>
-            <th>Mode of Payment</th>
-            <th>Payment Receiver</th>
-        `;
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
+        // Create separate tables for each day
+        sortedDays.forEach(day => {
+            const daySection = document.createElement('div');
+            daySection.innerHTML = `<h3>${day}</h3>`; // Day header
 
-        const tbody = document.createElement('tbody');
+            // Create table for the current day
+            const table = document.createElement('table');
+            table.classList.add('attendance-table'); // Add class for styling
 
-        for (const [day, entries] of Object.entries(days)) {
-            entries.forEach(entry => {
+            // Create the table header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>User</th>
+                    <th>Training Category</th>
+                    <th>Amount Paid (PHP)</th>
+                    <th>Mode of Payment</th>
+                    <th>Payment Receiver</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+
+            // Add entries for the current day
+            days[day].forEach(entry => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${day}</td>
                     <td>${entry.user}</td>
                     <td>${entry.trainingCategory}</td>
                     <td>${entry.amountPaid !== '' ? entry.amountPaid : 0}</td>
@@ -199,10 +206,13 @@ function displayGroupedAttendance(groupedData) {
                 `;
                 tbody.appendChild(row);
             });
-        }
 
-        table.appendChild(tbody);
-        monthSection.appendChild(table);
-        attendanceRecords.appendChild(monthSection);
+            table.appendChild(tbody);
+            daySection.appendChild(table);
+            monthSection.appendChild(daySection); // Append the day's section to the month
+        });
+
+        attendanceRecords.appendChild(monthSection); // Append the month section to the main container
     }
 }
+
