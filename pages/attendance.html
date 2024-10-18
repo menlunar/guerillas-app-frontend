@@ -59,8 +59,17 @@
     </div>
 
     <h2>Attendance Records</h2>
-    <div id="attendanceRecords"></div>
+    <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate">
 
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate">
+
+        <button onclick="applyDateFilter()">Filter</button>
+    </div>
+    <div id="attendanceRecords">
+    </div>
     <script src="../assets/js/attendance.js"></script> <!-- Linked external JS -->
 </body>
 

@@ -216,3 +216,41 @@ function displayGroupedAttendance(groupedData) {
     }
 }
 
+
+function applyDateFilter() {
+    const startDate = new Date(document.getElementById('startDate').value);
+    const endDate = new Date(document.getElementById('endDate').value);
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        alert("Please select a valid date range.");
+        return;
+    }
+
+    // Filter data based on the selected date range
+    const filteredData = filterAttendanceByDateRange(groupedData, startDate, endDate);
+    displayGroupedAttendance(filteredData); // Call the display function with filtered data
+}
+
+function filterAttendanceByDateRange(data, startDate, endDate) {
+    const filteredData = {};
+
+    // Iterate through each month
+    for (const [month, days] of Object.entries(data)) {
+        const filteredDays = {};
+
+        // Filter days within the selected date range
+        for (const [day, entries] of Object.entries(days)) {
+            const dayDate = new Date(day);
+            if (dayDate >= startDate && dayDate <= endDate) {
+                filteredDays[day] = entries; // Keep entries within the date range
+            }
+        }
+
+        // Only include the month if there are any days that match the date range
+        if (Object.keys(filteredDays).length > 0) {
+            filteredData[month] = filteredDays;
+        }
+    }
+
+    return filteredData;
+}
