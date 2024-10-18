@@ -36,8 +36,22 @@
                 <!-- TrainingCategory will be dynamically populated here -->
             </select>
 
-            <label for="isPaid">Paid:</label>
-            <input type="checkbox" id="isPaid">
+            <div>
+                <label for="amountPaid">Amount Paid:</label>
+                <input type="text" id="amountPaid">
+
+                <label for="modeOfPayment">Mode of Payment:</label>
+                <select id="modeOfPayment">
+                    <!-- PaymentReceiver will be dynamically populated here -->
+                </select>
+
+                <label for="paymentReceiver">Payment Receiver:</label>
+                <select id="paymentReceiver">
+                    <!-- PaymentReceiver will be dynamically populated here -->
+                </select>
+            </div>
+            <!-- <label for="isPaid">Paid:</label>
+            <input type="checkbox" id="isPaid"> -->
 
             <button type="submit" id="submitAttendanceBtn">Add Attendance</button>
             <button type="button" id="cancelAttendanceBtn">Cancel</button>

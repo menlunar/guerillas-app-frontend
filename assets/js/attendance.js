@@ -12,6 +12,18 @@ const sampleTrainingCategories = [
     { id: 4, name: 'Others' }
 ];
 
+const sampleModeOfPayment = [
+    { id: 1, name: 'Cash' },
+    { id: 2, name: 'GCash' },
+    { id: 3, name: 'BankTransfer' },
+    { id: 4, name: 'Others' }
+];
+
+const samplePaymentReceiver = [
+    { id: 1, name: 'Sachi' },
+    { id: 2, name: 'CC' },
+    { id: 3, name: 'Menric' }
+];
 
 // Attendance Data
 let attendanceData = [];
@@ -24,11 +36,19 @@ const selectTrainingCategory = document.getElementById('selectTrainingCategory')
 const attendanceDate = document.getElementById('attendanceDate');
 const isPaidCheckbox = document.getElementById('isPaid');
 const attendanceRecords = document.getElementById('attendanceRecords');
+const selectAmountPaid = document.getElementById('amountPaid');
+const selectPaymentReceiver = document.getElementById('paymentReceiver');
+const selectModeOfPayment = document.getElementById('modeOfPayment');
+
+
 
 // Display attendance form when "Create Attendance" is clicked
 createAttendanceBtn.addEventListener('click', () => {
     populateUsersDropdown();
     populateTrainingCategoriesDropdown();
+    populateModeOfPaymentDropdown();
+    populatePaymentReceiverDropdown();
+    attendanceDate.value = new Date().toISOString().split('T')[0];
     attendanceFormContainer.style.display = 'block'; // Show the form
 });
 
@@ -50,6 +70,29 @@ function populateUsersDropdown() {
 }
 
 // Populate Training categories dropdown
+function populateModeOfPaymentDropdown() {
+    selectModeOfPayment.innerHTML = '';
+    sampleModeOfPayment.forEach(modeOfPayment => {
+        const option = document.createElement('option');
+        option.value = modeOfPayment.id;
+        option.textContent = modeOfPayment.name;
+        selectModeOfPayment.appendChild(option);
+    });
+}
+
+// Populate Training categories dropdown
+function populatePaymentReceiverDropdown() {
+    selectPaymentReceiver.innerHTML = '';
+    samplePaymentReceiver.forEach(receiver => {
+        const option = document.createElement('option');
+        option.value = receiver.id;
+        option.textContent = receiver.name;
+        selectPaymentReceiver.appendChild(option);
+    });
+}
+
+
+// Populate Training categories dropdown
 function populateTrainingCategoriesDropdown() {
     selectTrainingCategory.innerHTML = '';
     sampleTrainingCategories.forEach(category => {
@@ -60,6 +103,7 @@ function populateTrainingCategoriesDropdown() {
     });
 }
 
+
 // Add Attendance Data
 document.getElementById('attendanceForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -67,11 +111,16 @@ document.getElementById('attendanceForm').addEventListener('submit', (e) => {
     const userId = selectUser.value;
     const user = sampleUsers.find(u => u.id == userId).name;
     const date = attendanceDate.value;
-    const isPaid = isPaidCheckbox.checked;
+    // const isPaid = isPaidCheckbox.checked;
     const trainingCategoryId = selectTrainingCategory.value;
     const trainingCategory = sampleTrainingCategories.find(t => t.id == trainingCategoryId).name;
+    const amountPaid = selectAmountPaid.value;
+    const modeOfPaymentId = selectModeOfPayment.value;
+    const modeOfPayment = sampleModeOfPayment.find(m => m.id == modeOfPaymentId).name;
+    const paymentReceiverId = selectPaymentReceiver.value;
+    const paymentReceiver = samplePaymentReceiver.find(p => p.id == paymentReceiverId).name;
 
-    const newAttendance = { user, date, isPaid, trainingCategory};
+    const newAttendance = { user, date, trainingCategory, amountPaid, modeOfPayment, paymentReceiver };
 
     attendanceData.push(newAttendance); // Add to the list
     groupAttendanceByMonthAndDay(); // Regroup data by month and day
@@ -82,8 +131,8 @@ document.getElementById('attendanceForm').addEventListener('submit', (e) => {
 // Reset form inputs
 function resetForm() {
     selectUser.value = '';
-    attendanceDate.value = '';
-    isPaidCheckbox.checked = false;
+    attendanceDate.value = new Date().toISOString().split('T')[0];
+    // isPaidCheckbox.checked = false;
 }
 
 // Group Attendance Data by Month and then by Day
@@ -123,7 +172,7 @@ function displayGroupedAttendance(groupedData) {
             const ul = document.createElement('ul');
             entries.forEach(entry => {
                 const li = document.createElement('li');
-                li.textContent = `${entry.user} - ${entry.trainingCategory} - ${entry.isPaid ? 'Paid' : 'Unpaid'}`;
+                li.textContent = `${entry.user} - ${entry.trainingCategory} - Amount Paid : ${entry.amountPaid != '' ? entry.amountPaid : 0} php - ${entry.modeOfPayment} - Receiver : ${entry.paymentReceiver} `;
                 ul.appendChild(li);
             });
 
