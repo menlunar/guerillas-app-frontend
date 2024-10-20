@@ -1,3 +1,25 @@
+// Fetch Attendance Data from API on page load
+document.addEventListener('DOMContentLoaded', fetchAttendanceData);
+
+function fetchAttendanceData() {
+    axios.get('http://localhost:3000/attendance')
+        .then(response => {
+            // Assuming the API returns an array of attendance records
+            attendanceData = response.data.map(record => ({
+                user: record.name,
+                date: record.training_date,
+                trainingCategory: record.training_category,
+                amountPaid: record.payment_amount || 0, // Default to 0 if null
+                modeOfPayment: record.mode_of_payment || 'Null', // Default if null
+                paymentReceiver: record.payment_receiver || 'Null' // Default if null
+            }));
+            groupAttendanceByMonthAndDay(); // Group and display fetched data
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
 // Sample Users (for now, you can load this dynamically later)
 const sampleUsers = [
     { id: 1, name: 'John Doe' },
