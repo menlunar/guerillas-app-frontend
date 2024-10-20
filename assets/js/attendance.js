@@ -4,21 +4,37 @@ document.addEventListener('DOMContentLoaded', fetchAttendanceData);
 function fetchAttendanceData() {
     axios.get('http://localhost:3000/attendance')
         .then(response => {
-            // Assuming the API returns an array of attendance records
-            attendanceData = response.data.map(record => ({
-                user: record.name,
-                date: record.training_date,
-                trainingCategory: record.training_category,
-                amountPaid: record.payment_amount || 0, // Default to 0 if null
-                modeOfPayment: record.mode_of_payment || 'Null', // Default if null
-                paymentReceiver: record.payment_receiver || 'Null' // Default if null
-            }));
+            // Log the full response to inspect the data structure
+            console.log('Full Response:', response.data);
+
+            attendanceData = response.data.map(record => {
+                console.log('Mapping Record:', record); // Log each record for debugging
+
+                return {
+                    user: record.name || 'Unknown User', // Default to 'Unknown User' if null
+                    date: record.training_date ? new Date(record.training_date).toLocaleString() : 'Date Not Available', // Format the date
+                    trainingCategory: record.training_category || 'Unspecified', // Default if null
+                    membership: record.membership || 'Not Specified', // Include membership
+                    trainingFee: record.training_fee !== null ? record.training_fee : 0, // Default to 0 if null
+                    modeOfPayment: record.mode_of_payment || 'Not Specified', // Default if null
+                    paymentAmount: record.payment_amount !== null ? record.payment_amount : 0, // Default to 0 if null
+                    paymentReceiver: record.payment_receiver || 'Not Specified', // Default if null
+                    adminReceiver: record.admin_receiver || 'Not Specified', // Include admin_receiver
+                    isEvent: record.is_event || false, // Include is_event
+                    waived: record.waived || false, // Include waived
+                    waivedAmount: record.waived_amount !== null ? record.waived_amount : 0, // Default to 0 if null
+                    waivedDescription: record.waived_description || 'Not Specified' // Include waived_description
+                };
+            });
+
+            console.log('Attendance Data:', attendanceData); // Log the final mapped data
             groupAttendanceByMonthAndDay(); // Group and display fetched data
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
+
 
 // Sample Users (for now, you can load this dynamically later)
 const sampleUsers = [
@@ -192,51 +208,92 @@ function displayGroupedAttendance(groupedData) {
         // Sort the days in descending order (latest day first)
         const sortedDays = Object.keys(days).sort((a, b) => new Date(b) - new Date(a));
 
-        // Create separate tables for each day
+        // Create a single table for the entire month
+        const table = document.createElement('table');
+        table.classList.add('attendance-table'); // Add class for styling
+
+        // Create the table header
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th>Training Date</th>
+                <th>User</th>
+                <th>Training Category</th>
+                <th>Membership</th>
+                <th>Training Fee (PHP)</th>
+                <th>Mode of Payment</th>
+                <th>Payment Amount</th>
+                <th>Payment Receiver</th>
+                <th>Admin Receiver</th>
+                <th>Is Event</th>
+                <th>Waived</th>
+                <th>Waived Amount</th>
+                <th>Waived Description</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+
+        // Iterate over the sorted days and add entries for each day
         sortedDays.forEach(day => {
-            const daySection = document.createElement('div');
-            daySection.innerHTML = `<h3>${day}</h3>`; // Day header
-
-            // Create table for the current day
-            const table = document.createElement('table');
-            table.classList.add('attendance-table'); // Add class for styling
-
-            // Create the table header
-            const thead = document.createElement('thead');
-            thead.innerHTML = `
-                <tr>
-                    <th>User</th>
-                    <th>Training Category</th>
-                    <th>Amount Paid (PHP)</th>
-                    <th>Mode of Payment</th>
-                    <th>Payment Receiver</th>
-                </tr>
-            `;
-            table.appendChild(thead);
-
-            const tbody = document.createElement('tbody');
-
-            // Add entries for the current day
+            // Add rows for each entry in the current day
             days[day].forEach(entry => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${entry.user}</td>
-                    <td>${entry.trainingCategory}</td>
-                    <td>${entry.amountPaid !== '' ? entry.amountPaid : 0}</td>
-                    <td>${entry.modeOfPayment}</td>
-                    <td>${entry.paymentReceiver}</td>
+                    <td>${entry.date ? new Date(entry.date).toISOString().split('T')[0] : 'Date Not Available'}</td>
+                    <td>${entry.user || 'Unknown User'}</td>
+                    <td>${entry.trainingCategory || 'Unspecified'}</td>
+                    <td>${entry.membership || 'Not Specified'}</td>
+                    <td>${entry.trainingFee !== null ? entry.trainingFee : 0}</td>
+                    <td>${entry.modeOfPayment || 'N/A'}</td>
+                    <td>${entry.paymentAmount !== null ? entry.paymentAmount : 0}</td>
+                    <td>${entry.paymentReceiver || 'N/A'}</td>
+                    <td>${entry.adminReceiver || 'N/A'}</td>
+                    <td>${entry.isEvent ? 'Yes' : 'No'}</td>
+                    <td>${entry.waived ? 'Yes' : 'No'}</td>
+                    <td>${entry.waivedAmount !== null ? entry.waived_amount : 0}</td>
+                    <td>${entry.waivedDescription || 'N/A'}</td>
                 `;
                 tbody.appendChild(row);
             });
-
-            table.appendChild(tbody);
-            daySection.appendChild(table);
-            monthSection.appendChild(daySection); // Append the day's section to the month
         });
 
+
+        /*  sortedDays.forEach(day => {
+             if (!Array.isArray(days[day])) {
+                 console.error(`Expected an array for ${day}, but found:`, days[day]);
+                 return; // Skip this day if it's not an array
+             }
+ 
+             days[day].forEach(entry => {
+                 const row = document.createElement('tr');
+                 row.innerHTML = `
+                     <td>${entry.date ? new Date(entry.date).toLocaleString() : 'Date Not Available'}</td>
+                     <td>${entry.user || 'Unknown User'}</td>
+                     <td>${entry.trainingCategory || 'Unspecified'}</td>
+                     <td>${entry.membership || 'Not Specified'}</td>
+                     <td>${entry.trainingFee !== null ? entry.trainingFee : 0}</td>
+                     <td>${entry.modeOfPayment || 'N/A'}</td>
+                     <td>${entry.paymentAmount !== null ? entry.paymentAmount : 0}</td>
+                     <td>${entry.paymentReceiver || 'N/A'}</td>
+                     <td>${entry.adminReceiver || 'N/A'}</td>
+                     <td>${entry.isEvent ? 'Yes' : 'No'}</td>
+                     <td>${entry.waived ? 'Yes' : 'No'}</td>
+                     <td>${entry.waivedAmount !== null ? entry.waived_amount : 0}</td>
+                     <td>${entry.waivedDescription || 'N/A'}</td>
+                 `;
+                 tbody.appendChild(row);
+             });
+         }); */
+
+
+        table.appendChild(tbody);
+        monthSection.appendChild(table); // Append the table to the month section
         attendanceRecords.appendChild(monthSection); // Append the month section to the main container
     }
 }
+
 
 
 function applyDateFilter() {
