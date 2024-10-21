@@ -1,5 +1,9 @@
-// Fetch Attendance Data from API on page load
+// Fetch Attendance, and User Data from API on page load
 document.addEventListener('DOMContentLoaded', fetchAttendanceData);
+document.addEventListener('DOMContentLoaded', fetchUsersData);
+
+
+
 
 function fetchAttendanceData() {
     axios.get('http://localhost:3000/attendance')
@@ -35,19 +39,35 @@ function fetchAttendanceData() {
         });
 }
 
+function fetchUsersData() {
+    axios.get('http://localhost:3000/user')
+        .then(response => {
+            // Log the full response to inspect the data structure
+            console.log('Full Response:', response.data);
 
-// Sample Users (for now, you can load this dynamically later)
-const sampleUsers = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Alice Johnson' }
-];
+            userData = response.data.map(record => {
+                console.log('Mapping Record:', record); // Log each record for debugging
+
+                return {
+                    user: record.user_id,
+                    name: record.name || 'Unknown User'
+                };
+            });
+
+            console.log('User Data:', userData); // Log the final mapped data
+            populateUsersDropdown(userData);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
 
 const sampleTrainingCategories = [
     { id: 1, name: 'Jiujitsu' },
-    { id: 2, name: 'Wrestling' },
-    { id: 3, name: 'Judo' },
-    { id: 4, name: 'Others' }
+    { id: 2, name: 'Judo' },
+    { id: 3, name: 'Wrestling' },
+    { id: 4, name: 'Open Mats' }
 ];
 
 const sampleModeOfPayment = [
@@ -66,6 +86,9 @@ const samplePaymentReceiver = [
 // Attendance Data
 let attendanceData = [];
 
+// Attendance Data
+let userData = [];
+
 // Elements
 const attendanceFormContainer = document.getElementById('attendanceFormContainer');
 const createAttendanceBtn = document.getElementById('createAttendanceBtn');
@@ -82,7 +105,7 @@ const selectModeOfPayment = document.getElementById('modeOfPayment');
 
 // Display attendance form when "Create Attendance" is clicked
 createAttendanceBtn.addEventListener('click', () => {
-    populateUsersDropdown();
+    populateUsersDropdown(userData);
     populateTrainingCategoriesDropdown();
     populateModeOfPaymentDropdown();
     populatePaymentReceiverDropdown();
@@ -96,12 +119,23 @@ document.getElementById('cancelAttendanceBtn').addEventListener('click', () => {
     resetForm();
 });
 
-// Populate users dropdown
-function populateUsersDropdown() {
+// // Populate users dropdown
+// function populateUsersDropdown() {
+//     selectUser.innerHTML = '';
+//     sampleUsers.forEach(user => {
+//         const option = document.createElement('option');
+//         option.value = user.id;
+//         option.textContent = user.name;
+//         selectUser.appendChild(option);
+//     });
+// }
+
+// Populate users dropdown with dynamic data
+function populateUsersDropdown(users) {
     selectUser.innerHTML = '';
-    sampleUsers.forEach(user => {
+    users.forEach(user => {
         const option = document.createElement('option');
-        option.value = user.id;
+        option.value = user.user;
         option.textContent = user.name;
         selectUser.appendChild(option);
     });
@@ -258,35 +292,6 @@ function displayGroupedAttendance(groupedData) {
                 tbody.appendChild(row);
             });
         });
-
-
-        /*  sortedDays.forEach(day => {
-             if (!Array.isArray(days[day])) {
-                 console.error(`Expected an array for ${day}, but found:`, days[day]);
-                 return; // Skip this day if it's not an array
-             }
- 
-             days[day].forEach(entry => {
-                 const row = document.createElement('tr');
-                 row.innerHTML = `
-                     <td>${entry.date ? new Date(entry.date).toLocaleString() : 'Date Not Available'}</td>
-                     <td>${entry.user || 'Unknown User'}</td>
-                     <td>${entry.trainingCategory || 'Unspecified'}</td>
-                     <td>${entry.membership || 'Not Specified'}</td>
-                     <td>${entry.trainingFee !== null ? entry.trainingFee : 0}</td>
-                     <td>${entry.modeOfPayment || 'N/A'}</td>
-                     <td>${entry.paymentAmount !== null ? entry.paymentAmount : 0}</td>
-                     <td>${entry.paymentReceiver || 'N/A'}</td>
-                     <td>${entry.adminReceiver || 'N/A'}</td>
-                     <td>${entry.isEvent ? 'Yes' : 'No'}</td>
-                     <td>${entry.waived ? 'Yes' : 'No'}</td>
-                     <td>${entry.waivedAmount !== null ? entry.waived_amount : 0}</td>
-                     <td>${entry.waivedDescription || 'N/A'}</td>
-                 `;
-                 tbody.appendChild(row);
-             });
-         }); */
-
 
         table.appendChild(tbody);
         monthSection.appendChild(table); // Append the table to the month section
