@@ -1,7 +1,9 @@
 // Fetch Attendance, and User Data from API on page load
 document.addEventListener('DOMContentLoaded', fetchAttendanceData);
 document.addEventListener('DOMContentLoaded', fetchUsersData);
-
+// Add event listeners for the checkboxes
+document.getElementById('isEvent').addEventListener('change', toggleFields);
+document.getElementById('isWaived').addEventListener('change', toggleFields);
 
 
 
@@ -79,8 +81,7 @@ const sampleModeOfPayment = [
 
 const samplePaymentReceiver = [
     { id: 1, name: 'Sachi' },
-    { id: 2, name: 'CC' },
-    { id: 3, name: 'Menric' }
+    { id: 2, name: 'CC' }
 ];
 
 // Attendance Data
@@ -98,7 +99,7 @@ const attendanceDate = document.getElementById('attendanceDate');
 const isPaidCheckbox = document.getElementById('isPaid');
 const attendanceRecords = document.getElementById('attendanceRecords');
 const selectAmountPaid = document.getElementById('amountPaid');
-const selectPaymentReceiver = document.getElementById('paymentReceiver');
+const selectAdminReceiver = document.getElementById('adminReceiver');
 const selectModeOfPayment = document.getElementById('modeOfPayment');
 
 
@@ -108,7 +109,7 @@ createAttendanceBtn.addEventListener('click', () => {
     populateUsersDropdown(userData);
     populateTrainingCategoriesDropdown();
     populateModeOfPaymentDropdown();
-    populatePaymentReceiverDropdown();
+    populateAdminReceiverDropdown();
     attendanceDate.value = new Date().toISOString().split('T')[0];
     attendanceFormContainer.style.display = 'block'; // Show the form
 });
@@ -141,7 +142,7 @@ function populateUsersDropdown(users) {
     });
 }
 
-// Populate Training categories dropdown
+//populateModeOfPaymentDropdown
 function populateModeOfPaymentDropdown() {
     selectModeOfPayment.innerHTML = '';
     sampleModeOfPayment.forEach(modeOfPayment => {
@@ -152,14 +153,14 @@ function populateModeOfPaymentDropdown() {
     });
 }
 
-// Populate Training categories dropdown
-function populatePaymentReceiverDropdown() {
-    selectPaymentReceiver.innerHTML = '';
+// populateAdminReceiverDropdown
+function populateAdminReceiverDropdown() {
+    selectAdminReceiver.innerHTML = '';
     samplePaymentReceiver.forEach(receiver => {
         const option = document.createElement('option');
         option.value = receiver.id;
         option.textContent = receiver.name;
-        selectPaymentReceiver.appendChild(option);
+        selectAdminReceiver.appendChild(option);
     });
 }
 
@@ -189,7 +190,7 @@ document.getElementById('attendanceForm').addEventListener('submit', (e) => {
     const amountPaid = selectAmountPaid.value;
     const modeOfPaymentId = selectModeOfPayment.value;
     const modeOfPayment = sampleModeOfPayment.find(m => m.id == modeOfPaymentId).name;
-    const paymentReceiverId = selectPaymentReceiver.value;
+    const paymentReceiverId = selectAdminReceiver.value;
     const paymentReceiver = samplePaymentReceiver.find(p => p.id == paymentReceiverId).name;
 
     const newAttendance = { user, date, trainingCategory, amountPaid, modeOfPayment, paymentReceiver };
@@ -262,7 +263,7 @@ function displayGroupedAttendance(groupedData) {
                 <th>Is Event</th>
                 <th>Waived</th>
                 <th>Waived Amount</th>
-                <th>Waived Description</th>
+                <th>Event / Waived Description</th>
             </tr>
         `;
         table.appendChild(thead);
@@ -338,3 +339,19 @@ function filterAttendanceByDateRange(data, startDate, endDate) {
 
     return filteredData;
 }
+
+
+// Function to toggle visibility based on checkboxes
+function toggleFields() {
+    const isEventChecked = document.getElementById('isEvent').checked;
+    const isWaivedChecked = document.getElementById('isWaived').checked;
+    const waivedFields = document.getElementById('waivedFields');
+
+    // Show fields if either checkbox is checked
+    if (isEventChecked || isWaivedChecked) {
+        waivedFields.style.display = 'block';
+    } else {
+        waivedFields.style.display = 'none';
+    }
+}
+

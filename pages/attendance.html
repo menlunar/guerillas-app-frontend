@@ -43,21 +43,37 @@
 
                 <label for="modeOfPayment">Mode of Payment:</label>
                 <select id="modeOfPayment">
-                    <!-- PaymentReceiver will be dynamically populated here -->
+                    <!-- modeOfPayment will be dynamically populated here -->
                 </select>
 
-                <label for="paymentReceiver">Payment Receiver:</label>
-                <select id="paymentReceiver">
-                    <!-- PaymentReceiver will be dynamically populated here -->
+                <label for="adminReceiver">Admin Receiver:</label>
+                <select id="adminReceiver">
+                    <!-- AdminReceiver will be dynamically populated here -->
                 </select>
             </div>
-            <!-- <label for="isPaid">Paid:</label>
-            <input type="checkbox" id="isPaid"> -->
+
+            <div>
+                <label for="isEvent">Event:</label>
+                <input type="checkbox" id="isEvent">
+
+                <label for="isWaived">Waived:</label>
+                <input type="checkbox" id="isWaived">
+            </div>
+
+            <!-- Fields that will be toggled -->
+            <div id="waivedFields" style="display: none;">
+                <label for="waivedAmount">Waived Amount:</label>
+                <input type="text" id="waivedAmount" placeholder="Enter waived amount">
+
+                <label for="waivedDescription">Waived / Event Description:</label>
+                <input type="text" id="waivedDescription" placeholder="Enter description">
+            </div>
 
             <button type="submit" id="submitAttendanceBtn">Add Attendance</button>
             <button type="button" id="cancelAttendanceBtn">Cancel</button>
         </form>
     </div>
+
 
     <h2>Attendance Records</h2>
     <div>
