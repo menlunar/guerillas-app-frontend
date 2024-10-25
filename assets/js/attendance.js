@@ -75,10 +75,10 @@ async function postAttendance(data, userID, trainingCategoryId, adminReceiverId)
         payment_amount: data.paymentAmount,
         mode_of_payment: data.modeOfPayment,
         payment_receiver: data.paymentReceiver,
-        waived: data.isWaived,
-        waived_amount: data.waivedAmount,
-        waived_description: data.waivedDescription,
-        is_event: data.isEvent,
+        waived: data.isWaived ?? false,
+        waived_amount: data.waivedAmount || 0,
+        waived_description: data.waivedDescription ?? null,
+        is_event: data.isEvent ?? false,
         training_category_id: trainingCategoryId,
         admin_id: adminReceiverId
     }
