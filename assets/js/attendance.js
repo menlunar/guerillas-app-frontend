@@ -64,6 +64,34 @@ function fetchUsersData() {
         });
 }
 
+// Function to post attendance data
+async function postAttendance(data, userID, trainingCategoryId, adminReceiverId) {
+    // Add event_training_fee as null directly in the function
+
+    const attendanceData = {
+        training_date: data.date,
+        user_id: userID,
+        event_training_fee: null,
+        payment_amount: data.paymentAmount,
+        mode_of_payment: data.modeOfPayment,
+        payment_receiver: data.paymentReceiver,
+        waived: data.isWaived ?? false,
+        waived_amount: data.waivedAmount || 0,
+        waived_description: data.waivedDescription ?? null,
+        is_event: data.isEvent ?? false,
+        training_category_id: trainingCategoryId,
+        admin_id: adminReceiverId
+    }
+
+    try {
+        const response = await axios.post('http://localhost:3000/attendance', attendanceData);
+        console.log('Response:', response.data); // Handle the response data
+        return response;
+    } catch (error) {
+        console.error('Error posting attendance data:', error);
+        return false;
+    }
+}
 
 const sampleTrainingCategories = [
     { id: 1, name: 'Jiujitsu' },
@@ -79,7 +107,7 @@ const sampleModeOfPayment = [
     { id: 4, name: 'Others' }
 ];
 
-const samplePaymentReceiver = [
+const sampleAdminReceiver = [
     { id: 1, name: 'Sachi' },
     { id: 2, name: 'CC' }
 ];
@@ -90,6 +118,8 @@ let attendanceData = [];
 // Attendance Data
 let userData = [];
 
+let postAttendanceData = [];
+
 // Elements
 const attendanceFormContainer = document.getElementById('attendanceFormContainer');
 const createAttendanceBtn = document.getElementById('createAttendanceBtn');
@@ -99,10 +129,13 @@ const attendanceDate = document.getElementById('attendanceDate');
 const isPaidCheckbox = document.getElementById('isPaid');
 const attendanceRecords = document.getElementById('attendanceRecords');
 const selectAmountPaid = document.getElementById('amountPaid');
+const selectPaymentReceiver = document.getElementById('paymentReceiver');
 const selectAdminReceiver = document.getElementById('adminReceiver');
 const selectModeOfPayment = document.getElementById('modeOfPayment');
-
-
+const selectIsEvent = document.getElementById('isEvent');
+const selectIsWaived = document.getElementById('isWaived');
+const selectWaivedAmount = document.getElementById('waivedAmount');
+const selectWaivedDescription = document.getElementById('waivedDescription');
 
 // Display attendance form when "Create Attendance" is clicked
 createAttendanceBtn.addEventListener('click', () => {
@@ -156,7 +189,7 @@ function populateModeOfPaymentDropdown() {
 // populateAdminReceiverDropdown
 function populateAdminReceiverDropdown() {
     selectAdminReceiver.innerHTML = '';
-    samplePaymentReceiver.forEach(receiver => {
+    sampleAdminReceiver.forEach(receiver => {
         const option = document.createElement('option');
         option.value = receiver.id;
         option.textContent = receiver.name;
@@ -178,28 +211,62 @@ function populateTrainingCategoriesDropdown() {
 
 
 // Add Attendance Data
-document.getElementById('attendanceForm').addEventListener('submit', (e) => {
+document.getElementById('attendanceForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const userId = selectUser.value;
-    const user = sampleUsers.find(u => u.id == userId).name;
+    const user = userData.find(u => u.user == userId).name;
     const date = attendanceDate.value;
-    // const isPaid = isPaidCheckbox.checked;
     const trainingCategoryId = selectTrainingCategory.value;
     const trainingCategory = sampleTrainingCategories.find(t => t.id == trainingCategoryId).name;
-    const amountPaid = selectAmountPaid.value;
+    const paymentAmount = selectAmountPaid.value;
     const modeOfPaymentId = selectModeOfPayment.value;
     const modeOfPayment = sampleModeOfPayment.find(m => m.id == modeOfPaymentId).name;
-    const paymentReceiverId = selectAdminReceiver.value;
-    const paymentReceiver = samplePaymentReceiver.find(p => p.id == paymentReceiverId).name;
+    const paymentReceiver = selectPaymentReceiver.value;
+    const adminReceiverId = selectAdminReceiver.value;
+    const adminReceiver = sampleAdminReceiver.find(p => p.id == adminReceiverId).name;
+    const isEvent = selectIsEvent.checked;
+    const isWaived = selectIsWaived.checked;
+    const waivedAmount = selectWaivedAmount.value;
+    const waivedDescription = selectWaivedDescription.value;
 
-    const newAttendance = { user, date, trainingCategory, amountPaid, modeOfPayment, paymentReceiver };
+    const newAttendance = {
+        user,
+        date,
+        trainingCategory,
+        paymentAmount,
+        modeOfPayment,
+        paymentReceiver,
+        adminReceiver,
+        isEvent,
+        isWaived,
+        waivedAmount,
+        waivedDescription
+    };
 
-    attendanceData.push(newAttendance); // Add to the list
-    groupAttendanceByMonthAndDay(); // Regroup data by month and day
-    resetForm(); // Clear form inputs
-    attendanceFormContainer.style.display = 'none'; // Hide the form
+    try {
+        // Wait for postAttendance to complete
+        const response = await postAttendance(newAttendance, userId, trainingCategoryId, adminReceiverId);
+
+        // Check if the response was successful
+        if (response.status === 201) {
+            console.log('Attendance posted successfully:', response.data);
+
+            // Proceed with the rest of the logic if successful
+            attendanceData.push(newAttendance); // Add to the list
+            groupAttendanceByMonthAndDay(); // Regroup data by month and day
+            resetForm(); // Clear form inputs
+            attendanceFormContainer.style.display = 'none'; // Hide the form
+        } else {
+            console.error('Failed to post attendance:', response);
+            alert('Failed to post attendance. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error posting attendance:', error);
+        alert('An error occurred while posting attendance. Please try again.');
+    }
 });
+
 
 // Reset form inputs
 function resetForm() {
@@ -283,8 +350,8 @@ function displayGroupedAttendance(groupedData) {
                     <td>${entry.trainingFee !== null ? entry.trainingFee : 0}</td>
                     <td>${entry.modeOfPayment || 'N/A'}</td>
                     <td>${entry.paymentAmount !== null ? entry.paymentAmount : 0}</td>
-                    <td>${entry.paymentReceiver || 'N/A'}</td>
                     <td>${entry.adminReceiver || 'N/A'}</td>
+                    <td>${entry.paymentReceiver || 'N/A'}</td>
                     <td>${entry.isEvent ? 'Yes' : 'No'}</td>
                     <td>${entry.waived ? 'Yes' : 'No'}</td>
                     <td>${entry.waivedAmount !== null ? entry.waived_amount : 0}</td>
