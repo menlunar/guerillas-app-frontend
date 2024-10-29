@@ -17,6 +17,7 @@ function fetchAttendanceData() {
                 console.log('Mapping Record:', record); // Log each record for debugging
 
                 return {
+                    id: record.id, // Include the attendance ID here
                     user: record.name || 'Unknown User', // Default to 'Unknown User' if null
                     date: record.training_date ? new Date(record.training_date).toLocaleString() : 'Date Not Available', // Format the date
                     trainingCategory: record.training_category || 'Unspecified', // Default if null
@@ -92,6 +93,29 @@ async function postAttendance(data, userID, trainingCategoryId, adminReceiverId)
         return false;
     }
 }
+
+function handleDeleteAttendance(event) {
+    const attendanceId = event.target.getAttribute('data-id');
+
+    axios.delete(`http://localhost:3000/attendance/${attendanceId}`)
+        .then(response => {
+            if (response.status === 200) {
+                // Remove the record from the local attendanceData array
+                attendanceData = attendanceData.filter(entry => entry.id !== parseInt(attendanceId));
+
+                // Refresh the displayed attendance records
+                groupAttendanceByMonthAndDay();
+                console.log(`Attendance record with ID ${attendanceId} deleted successfully.`);
+            } else {
+                console.error(`Failed to delete attendance record with ID ${attendanceId}.`);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting attendance record:', error);
+            alert('An error occurred while deleting the attendance record.');
+        });
+}
+
 
 const sampleTrainingCategories = [
     { id: 1, name: 'Jiujitsu' },
@@ -331,41 +355,54 @@ function displayGroupedAttendance(groupedData) {
                 <th>Waived</th>
                 <th>Waived Amount</th>
                 <th>Event / Waived Description</th>
+                <th>Actions</th> <!-- New column for actions -->
             </tr>
         `;
         table.appendChild(thead);
 
         const tbody = document.createElement('tbody');
 
-        // Iterate over the sorted days and add entries for each day
+        // Iterate over sorted days and create rows for each entry
         sortedDays.forEach(day => {
-            // Add rows for each entry in the current day
             days[day].forEach(entry => {
                 const row = document.createElement('tr');
+
                 row.innerHTML = `
-                    <td>${entry.date ? new Date(entry.date).toISOString().split('T')[0] : 'Date Not Available'}</td>
-                    <td>${entry.user || 'Unknown User'}</td>
-                    <td>${entry.trainingCategory || 'Unspecified'}</td>
-                    <td>${entry.membership || 'Not Specified'}</td>
-                    <td>${entry.trainingFee !== null ? entry.trainingFee : 0}</td>
-                    <td>${entry.modeOfPayment || 'N/A'}</td>
-                    <td>${entry.paymentAmount !== null ? entry.paymentAmount : 0}</td>
-                    <td>${entry.adminReceiver || 'N/A'}</td>
-                    <td>${entry.paymentReceiver || 'N/A'}</td>
+                    <td>${entry.date}</td>
+                    <td>${entry.user}</td>
+                    <td>${entry.trainingCategory}</td>
+                    <td>${entry.membership}</td>
+                    <td>${entry.trainingFee}</td>
+                    <td>${entry.modeOfPayment}</td>
+                    <td>${entry.paymentAmount}</td>
+                    <td>${entry.paymentReceiver}</td>
+                    <td>${entry.adminReceiver}</td>
                     <td>${entry.isEvent ? 'Yes' : 'No'}</td>
                     <td>${entry.waived ? 'Yes' : 'No'}</td>
-                    <td>${entry.waivedAmount !== null ? entry.waived_amount : 0}</td>
-                    <td>${entry.waivedDescription || 'N/A'}</td>
+                    <td>${entry.waivedAmount}</td>
+                    <td>${entry.waivedDescription}</td>
                 `;
+
+                // Create the delete button for each row
+                const actionCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.setAttribute('data-id', entry.id); // Set data-id attribute with attendance ID
+                deleteButton.addEventListener('click', handleDeleteAttendance); // Add click event to handle delete
+                actionCell.appendChild(deleteButton);
+                row.appendChild(actionCell);
+
                 tbody.appendChild(row);
             });
         });
 
         table.appendChild(tbody);
-        monthSection.appendChild(table); // Append the table to the month section
-        attendanceRecords.appendChild(monthSection); // Append the month section to the main container
+        monthSection.appendChild(table);
+        attendanceRecords.appendChild(monthSection);
     }
 }
+
+
 
 
 
